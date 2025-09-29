@@ -90,7 +90,6 @@
                 <select id="admin-course" aria-label="Seleccionar curso"></select>
 
                 <label for="admin-amount">Cantidad a sumar</label>
-                <!-- permitir negativos: quitar min="1" -->
                 <input id="admin-amount" type="number" value="1" aria-label="Cantidad">
 
                 <button id="admin-add">Agregar donaciones</button>
@@ -101,7 +100,7 @@
 
     <script>
     (function(){
-        const SECRET_CODE = '0000';
+        const SECRET_CODE = '95241322';
         const MAX_FAILED = 5;
         const LOCK_MS = 60 * 60 * 1000; // 1 hora
         const STORAGE_COURSES_KEY = 'coaniquem_courses_v1';
