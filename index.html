@@ -50,8 +50,245 @@
         <p>📧 <a href="mailto:gabriela.morales@manquecuranunoa.cl">gabriela.morales@manquecuranunoa.cl</a></p>
     </section>
 
+    <!-- Sección de ranking (cursos con más donaciones) -->
+    <section id="ranking" class="ranking">
+        <h3>Cursos con más donaciones</h3>
+        <ul id="ranking-list" class="ranking-list"></ul>
+        <p class="nota">El curso con más donaciones recibirá un pequeño presente como agradecimiento.</p>
+        <p id="no-donations" class="nota small">Aún no hay donaciones registradas.</p>
+    </section>
+
     <footer>
         <p>Gracias por tu solidaridad 💖</p>
     </footer>
+
+    <!-- Trigger escondidito para activar ADMIN -->
+    <button id="secret-trigger" title="Area escondida" aria-label="activador admin"></button>
+
+    <!-- Modal / panel admin (hidden por defecto) -->
+    <div id="admin-modal" class="admin-modal" aria-hidden="true">
+        <div class="admin-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+            <button id="close-admin" class="close-btn" title="Cerrar" aria-label="Cerrar">✕</button>
+            <h3 id="admin-title">Ingreso de administrador</h3>
+
+            <div id="admin-login">
+                <p>Ingresa el código secreto para activar modo ADMIN:</p>
+                <input id="admin-code" type="password" placeholder="Código secreto" aria-label="Código secreto">
+                <button id="admin-auth">Activar</button>
+                <p id="auth-msg" class="small" aria-live="polite"></p>
+            </div>
+
+            <div id="admin-controls" style="display:none;">
+                <p class="small">Modo ADMIN activado. Puedes sumar donaciones:</p>
+                <label for="admin-course">Curso</label>
+                <select id="admin-course" aria-label="Seleccionar curso"></select>
+
+                <label for="admin-amount">Cantidad a sumar</label>
+                <!-- permitir negativos: quitar min="1" -->
+                <input id="admin-amount" type="number" value="1" aria-label="Cantidad">
+
+                <button id="admin-add">Agregar donaciones</button>
+                <p id="admin-status" class="small" aria-live="polite"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        const SECRET_CODE = '95241322';
+        const MAX_FAILED = 5;
+        const LOCK_MS = 60 * 60 * 1000; // 1 hora
+        const STORAGE_COURSES_KEY = 'coaniquem_courses_v1';
+        const STORAGE_FAILED_KEY = 'coaniquem_admin_failed';
+        const STORAGE_LOCK_KEY = 'coaniquem_admin_lockuntil';
+
+        // Construir lista de cursos, excluyendo 7° B (organizador)
+        function buildCourses() {
+            const list = [];
+            const pushRange = (grade, letters) => letters.forEach(l => {
+                if (grade === '7°' && l === 'B') return; // excluir 7° B
+                list.push({ name: `${grade} ${l}`, donations: 0 });
+            });
+            for (let g = 1; g <= 6; g++) {
+                const label = g + '°';
+                if (g === 3) pushRange(label, ['A','B','C','D','E']);
+                else pushRange(label, ['A','B','C','D']);
+            }
+            ['7°','8°','I°','II°','III°','IV°'].forEach(g => pushRange(g, ['A','B','C']));
+            return list;
+        }
+
+        // Load/save courses (persistir donaciones)
+        function loadCourses() {
+            try {
+                const raw = localStorage.getItem(STORAGE_COURSES_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch(e){}
+            const initial = buildCourses();
+            saveCourses(initial);
+            return initial;
+        }
+        function saveCourses(c) {
+            try { localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(c)); } catch(e){}
+        }
+
+        // Lockout helpers
+        function getFailed() { return parseInt(localStorage.getItem(STORAGE_FAILED_KEY) || '0', 10); }
+        function setFailed(n) { localStorage.setItem(STORAGE_FAILED_KEY, String(n)); }
+        function getLockUntil() { return parseInt(localStorage.getItem(STORAGE_LOCK_KEY) || '0', 10); }
+        function setLockUntil(ts) { localStorage.setItem(STORAGE_LOCK_KEY, String(ts)); }
+
+        const courses = loadCourses();
+
+        // DOM refs
+        const rankingList = document.getElementById('ranking-list');
+        const noDonations = document.getElementById('no-donations');
+        const adminModal = document.getElementById('admin-modal');
+        const secretTrigger = document.getElementById('secret-trigger');
+        const adminAuthBtn = document.getElementById('admin-auth');
+        const adminCodeInput = document.getElementById('admin-code');
+        const authMsg = document.getElementById('auth-msg');
+        const adminControls = document.getElementById('admin-controls');
+        const adminCourseSelect = document.getElementById('admin-course');
+        const adminAmount = document.getElementById('admin-amount');
+        const adminAdd = document.getElementById('admin-add');
+        const adminStatus = document.getElementById('admin-status');
+        const closeAdmin = document.getElementById('close-admin');
+
+        // Render ranking
+        function render() {
+            const sorted = [...courses].sort((a,b) => b.donations - a.donations || a.name.localeCompare(b.name));
+            rankingList.innerHTML = '';
+            sorted.forEach(c => {
+                const li = document.createElement('li');
+                li.innerHTML = '<span class="course">' + c.name + '</span> <span class="badge">' + c.donations + ' prendas</span>';
+                rankingList.appendChild(li);
+            });
+            const allZero = courses.every(c => c.donations === 0);
+            noDonations.style.display = allZero ? 'block' : 'none';
+        }
+
+        // Populate admin select
+        function populateAdminSelect() {
+            adminCourseSelect.innerHTML = '';
+            courses.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                opt.textContent = c.name;
+                adminCourseSelect.appendChild(opt);
+            });
+        }
+
+        // Add donations and persist
+        function addDonationsToCourse(courseName, amount) {
+            const course = courses.find(c => c.name === courseName);
+            if (!course) return false;
+            course.donations += amount;
+            saveCourses(courses);
+            render();
+            return true;
+        }
+
+        // Check lock state
+        function isLocked() {
+            const lockUntil = getLockUntil();
+            if (!lockUntil) return false;
+            return Date.now() < lockUntil;
+        }
+        function lockRemainingMs() {
+            const lockUntil = getLockUntil();
+            return Math.max(0, lockUntil - Date.now());
+        }
+
+        // UI events
+        secretTrigger.addEventListener('click', () => {
+            adminModal.style.display = 'flex';
+            adminModal.setAttribute('aria-hidden','false');
+            adminCodeInput.value = '';
+            adminCodeInput.focus();
+            updateAuthMsg();
+        });
+        closeAdmin.addEventListener('click', () => {
+            adminModal.style.display = 'none';
+            adminModal.setAttribute('aria-hidden','true');
+            authMsg.textContent = '';
+            adminControls.style.display = 'none';
+        });
+
+        adminAuthBtn.addEventListener('click', () => {
+            const now = Date.now();
+            if (isLocked()) {
+                const rem = Math.ceil(lockRemainingMs() / 60000);
+                authMsg.textContent = `Cuenta bloqueada por intentos fallidos. Intenta en ${rem} min.`;
+                return;
+            }
+            const code = (adminCodeInput.value || '').trim();
+            if (code === SECRET_CODE) {
+                // reset failed attempts
+                setFailed(0);
+                setLockUntil(0);
+                authMsg.textContent = 'Administrador activado';
+                adminControls.style.display = 'block';
+                populateAdminSelect();
+                adminCourseSelect.focus();
+            } else {
+                const failed = getFailed() + 1;
+                setFailed(failed);
+                if (failed >= MAX_FAILED) {
+                    const until = now + LOCK_MS;
+                    setLockUntil(until);
+                    authMsg.textContent = 'Demasiados intentos. Bloqueado por 1 hora.';
+                } else {
+                    const left = MAX_FAILED - failed;
+                    authMsg.textContent = `Código incorrecto. Te quedan ${left} intentos.`;
+                }
+                adminControls.style.display = 'none';
+            }
+        });
+
+        adminAdd.addEventListener('click', () => {
+            const courseName = adminCourseSelect.value;
+            const amount = parseInt(adminAmount.value, 10);
+            // permitir negativos, pero no aceptar 0 o entradas inválidas
+            if (!Number.isFinite(amount) || amount === 0) {
+                adminStatus.textContent = 'Ingresa una cantidad distinta de 0';
+                return;
+            }
+            const ok = addDonationsToCourse(courseName, amount);
+            if (ok) {
+                adminStatus.textContent = `Se actualizaron ${amount > 0 ? '+'+amount : amount} prendas en ${courseName}.`;
+            } else {
+                adminStatus.textContent = 'Error al actualizar.';
+            }
+            setTimeout(()=> adminStatus.textContent = '', 3000);
+        });
+
+        // Cerrar modal con ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                adminModal.style.display = 'none';
+                adminModal.setAttribute('aria-hidden','true');
+            }
+        });
+
+        // Mostrar estado de bloqueo si corresponde
+        function updateAuthMsg() {
+            if (isLocked()) {
+                const mins = Math.ceil(lockRemainingMs() / 60000);
+                authMsg.textContent = `Cuenta bloqueada por intentos fallidos. Intenta en ${mins} min.`;
+            } else {
+                const failed = getFailed();
+                if (failed > 0) {
+                    const left = MAX_FAILED - failed;
+                    authMsg.textContent = `Intentos fallidos: ${failed}. Te quedan ${left}.`;
+                } else authMsg.textContent = '';
+            }
+        }
+
+        // Inicial
+        render();
+
+    })();
+    </script>
 </body>
 </html>
