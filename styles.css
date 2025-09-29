@@ -94,6 +94,134 @@ footer {
     margin-top: 20px;
 }
 
+/* RANKING y ADMIN */
+.ranking {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 18px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ranking-list {
+    list-style: none;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.ranking-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #fbfbfb;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.course {
+    font-weight: 600;
+    color: #333;
+}
+
+.badge {
+    background: #d62828;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+.nota {
+    margin-top: 12px;
+    font-weight: 600;
+    color: #1b1b1b;
+}
+
+.nota.small {
+    font-weight: normal;
+    color: #555;
+    margin-top: 6px;
+    font-size: 0.95em;
+}
+
+/* Estilos para trigger escondidito y modal admin */
+#secret-trigger {
+    position: fixed;
+    right: 8px;
+    bottom: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #d62828;
+    opacity: 0.06; /* muy discreto */
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.admin-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    z-index: 10000;
+}
+
+.admin-panel {
+    background: #fff;
+    padding: 16px;
+    width: 320px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.admin-panel h3 {
+    margin-bottom: 8px;
+    color: #d62828;
+}
+
+.admin-panel input[type="password"],
+.admin-panel input[type="number"],
+.admin-panel select {
+    width: 100%;
+    padding: 8px;
+    margin: 6px 0 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.admin-panel button {
+    background: #d62828;
+    color: #fff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.admin-panel .small {
+    font-size: 0.9em;
+    color: #444;
+    margin-top: 6px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    color: #777;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
 @media (max-width: 600px) {
     header {
         height: 200px;
