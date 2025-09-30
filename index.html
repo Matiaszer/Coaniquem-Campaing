@@ -1,300 +1,242 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campaña de Donación de Ropa - COANIQUEM</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaña de Donación de Ropa - COANIQUEM</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <div class="overlay">
-            <h1>Campaña de Donación de Ropa</h1>
-            <h2>En apoyo a COANIQUEM</h2>
-            <p>Del 20 de agosto al 30 de octubre</p>
-        </div>
-    </header>
-
-    <section class="info">
-        <h3>¿Por qué donar?</h3>
-        <p>COANIQUEM ayuda a niños, niñas y adolescentes que han sufrido quemaduras, brindándoles tratamiento, rehabilitación y apoyo a sus familias. Con tu donación, podemos marcar una diferencia en sus vidas.</p>
-    </section>
-
-    <section class="detalles">
-        <h3>¿Qué puedes donar?</h3>
-        <div class="cards">
-            <div class="card">
-                <img src="ropa.jpg" alt="Ropa en buen estado">
-                <p>Ropa de adulto y niño en buen estado</p>
-            </div>
-            <div class="card">
-                <img src="zapatos.jpg" alt="Calzado">
-                <p>Calzado limpio y en buen estado</p>
-            </div>
-            <div class="card">
-                <img src="accesorios.jpg" alt="Accesorios">
-                <p>Accesorios: gorros, bufandas, cinturones, etc.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="fechas">
-        <h3>Fechas y lugar de entrega</h3>
-        <p>📅 Desde el <strong>20 de agosto</strong> hasta el <strong>30 de octubre</strong></p>
-        <p>📍 Colegio Manquecura Ñuñoa, en la sala del 7°B, o puedes esperar a que pasemos por tu sala</p>
-    </section>
-
-    <section class="contacto">
-        <h3>Contacto</h3>
-        <p>Para más información, comunícate con <strong>Miss Gabriela Morales</strong></p>
-        <p>📧 <a href="mailto:gabriela.morales@manquecuranunoa.cl">gabriela.morales@manquecuranunoa.cl</a></p>
-    </section>
-
-    <!-- Sección de ranking (cursos con más donaciones) -->
-    <section id="ranking" class="ranking">
-        <h3>Cursos con más donaciones</h3>
-        <ul id="ranking-list" class="ranking-list"></ul>
-        <p class="nota">El curso con más donaciones recibirá un pequeño presente como agradecimiento.</p>
-        <p id="no-donations" class="nota small">Aún no hay donaciones registradas.</p>
-    </section>
-
-    <footer>
-        <p>© 2025 Pogonio Studios. Todos los derechos reservados.</p>
-
-        <p>Este producto es propiedad de Pogonio Studios. Queda prohibida su reproducción total o parcial, distribución, alquiler, préstamo, comunicación pública o transformación en cualquier forma y por cualquier medio, ya sea electrónico, mecánico o de otro tipo, sin la autorización previa y por escrito de Pogonio Studios.</p>
-
-        <p>Las marcas comerciales, logotipos y nombres de productos mencionados son propiedad de sus respectivos dueños y se utilizan únicamente con fines de identificación.</p>
-
-        <p>El software se proporciona “tal cual”, sin garantías de ningún tipo, expresas o implícitas, incluidas, entre otras, las garantías de comerciabilidad o adecuación a un propósito particular. Pogonio Studios no será responsable de ningún daño directo o indirecto derivado del uso de este producto.</p>
-    </footer>
-
-    <!-- Trigger escondidito para activar ADMIN -->
-    <button id="secret-trigger" title="Area escondida" aria-label="activador admin"></button>
-
-    <!-- Modal / panel admin (hidden por defecto) -->
-    <div id="admin-modal" class="admin-modal" aria-hidden="true">
-        <div class="admin-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
-            <button id="close-admin" class="close-btn" title="Cerrar" aria-label="Cerrar">✕</button>
-            <h3 id="admin-title">Ingreso de administrador</h3>
-
-            <div id="admin-login">
-                <p>Ingresa el código secreto para activar modo ADMIN:</p>
-                <input id="admin-code" type="password" placeholder="Código secreto" aria-label="Código secreto">
-                <button id="admin-auth">Activar</button>
-                <p id="auth-msg" class="small" aria-live="polite"></p>
-            </div>
-
-            <div id="admin-controls" style="display:none;">
-                <p class="small">Modo ADMIN activado. Puedes sumar donaciones:</p>
-                <label for="admin-course">Curso</label>
-                <select id="admin-course" aria-label="Seleccionar curso"></select>
-
-                <label for="admin-amount">Cantidad a sumar</label>
-                <input id="admin-amount" type="number" value="1" aria-label="Cantidad">
-
-                <button id="admin-add">Agregar donaciones</button>
-                <p id="admin-status" class="small" aria-live="polite"></p>
-            </div>
-        </div>
+  <header>
+    <div class="overlay">
+      <h1>Campaña de Donación de Ropa</h1>
+      <h2>En apoyo a COANIQUEM</h2>
+      <p>Del 20 de agosto al 30 de octubre</p>
     </div>
+  </header>
 
-    <script>
-    (function(){
-        const SECRET_CODE = '0000';
-        const MAX_FAILED = 5;
-        const LOCK_MS = 60 * 60 * 1000; // 1 hora
-        const STORAGE_COURSES_KEY = 'coaniquem_courses_v1';
-        const STORAGE_FAILED_KEY = 'coaniquem_admin_failed';
-        const STORAGE_LOCK_KEY = 'coaniquem_admin_lockuntil';
+  <section class="info">
+    <h3>¿Por qué donar?</h3>
+    <p>COANIQUEM ayuda a niños, niñas y adolescentes que han sufrido quemaduras, brindándoles tratamiento, rehabilitación y apoyo a sus familias. Con tu donación, podemos marcar una diferencia en sus vidas.</p>
+  </section>
 
-        // Construir lista de cursos, excluyendo 7° B (organizador)
-        function buildCourses() {
-            const list = [];
-            const pushRange = (grade, letters) => letters.forEach(l => {
-                if (grade === '7°' && l === 'B') return; // excluir 7° B
-                list.push({ name: `${grade} ${l}`, donations: 0 });
-            });
-            for (let g = 1; g <= 6; g++) {
-                const label = g + '°';
-                if (g === 3) pushRange(label, ['A','B','C','D','E']);
-                else pushRange(label, ['A','B','C','D']);
-            }
-            ['7°','8°','I°','II°','III°','IV°'].forEach(g => pushRange(g, ['A','B','C']));
-            return list;
-        }
+  <section class="detalles">
+    <h3>¿Qué puedes donar?</h3>
+    <div class="cards">
+      <div class="card">
+        <img src="ropa.jpg" alt="Ropa en buen estado">
+        <p>Ropa de adulto y niño en buen estado</p>
+      </div>
+      <div class="card">
+        <img src="zapatos.jpg" alt="Calzado">
+        <p>Calzado limpio y en buen estado</p>
+      </div>
+      <div class="card">
+        <img src="accesorios.jpg" alt="Accesorios">
+        <p>Accesorios: gorros, bufandas, cinturones, etc.</p>
+      </div>
+    </div>
+  </section>
 
-        // Load/save courses (persistir donaciones)
-        function loadCourses() {
-            try {
-                const raw = localStorage.getItem(STORAGE_COURSES_KEY);
-                if (raw) return JSON.parse(raw);
-            } catch(e){}
-            const initial = buildCourses();
-            saveCourses(initial);
-            return initial;
-        }
-        function saveCourses(c) {
-            try { localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(c)); } catch(e){}
-        }
+  <section class="fechas">
+    <h3>Fechas y lugar de entrega</h3>
+    <p>📅 Desde el <strong>20 de agosto</strong> hasta el <strong>30 de octubre</strong></p>
+    <p>📍 Colegio Manquecura Ñuñoa, en la sala del 7°B, o puedes esperar a que pasemos por tu sala</p>
+  </section>
 
-        // Lockout helpers
-        function getFailed() { return parseInt(localStorage.getItem(STORAGE_FAILED_KEY) || '0', 10); }
-        function setFailed(n) { localStorage.setItem(STORAGE_FAILED_KEY, String(n)); }
-        function getLockUntil() { return parseInt(localStorage.getItem(STORAGE_LOCK_KEY) || '0', 10); }
-        function setLockUntil(ts) { localStorage.setItem(STORAGE_LOCK_KEY, String(ts)); }
+  <section class="contacto">
+    <h3>Contacto</h3>
+    <p>Para más información, comunícate con <strong>Miss Gabriela Morales</strong></p>
+    <p>📧 <a href="mailto:gabriela.morales@manquecuranunoa.cl">gabriela.morales@manquecuranunoa.cl</a></p>
+  </section>
 
-        const courses = loadCourses();
+  <section id="ranking" class="ranking">
+    <h3>Cursos con más donaciones</h3>
+    <ul id="ranking-list" class="ranking-list"></ul>
+    <p class="nota">El curso con más donaciones recibirá un pequeño presente como agradecimiento.</p>
+    <p id="no-donations" class="nota small">Aún no hay donaciones registradas.</p>
+  </section>
 
-        // DOM refs
-        const rankingList = document.getElementById('ranking-list');
-        const noDonations = document.getElementById('no-donations');
-        const adminModal = document.getElementById('admin-modal');
-        const secretTrigger = document.getElementById('secret-trigger');
-        const adminAuthBtn = document.getElementById('admin-auth');
-        const adminCodeInput = document.getElementById('admin-code');
-        const authMsg = document.getElementById('auth-msg');
-        const adminControls = document.getElementById('admin-controls');
-        const adminCourseSelect = document.getElementById('admin-course');
-        const adminAmount = document.getElementById('admin-amount');
-        const adminAdd = document.getElementById('admin-add');
-        const adminStatus = document.getElementById('admin-status');
-        const closeAdmin = document.getElementById('close-admin');
+  <footer>
+    <p>© 2025 Pogonio Studios. Todos los derechos reservados.</p>
+    <p>Este producto es propiedad de Pogonio Studios. Queda prohibida su reproducción total o parcial sin autorización previa.</p>
+    <p>Las marcas comerciales, logotipos y nombres de productos mencionados son propiedad de sus respectivos dueños.</p>
+    <p>El software se proporciona “tal cual”, sin garantías de ningún tipo. Pogonio Studios no será responsable de ningún daño directo o indirecto derivado del uso de este producto.</p>
+  </footer>
 
-        // Render ranking
-        function render() {
-            const sorted = [...courses].sort((a,b) => b.donations - a.donations || a.name.localeCompare(b.name));
-            rankingList.innerHTML = '';
-            sorted.forEach(c => {
-                const li = document.createElement('li');
-                li.innerHTML = '<span class="course">' + c.name + '</span> <span class="badge">' + c.donations + ' prendas</span>';
-                rankingList.appendChild(li);
-            });
-            const allZero = courses.every(c => c.donations === 0);
-            noDonations.style.display = allZero ? 'block' : 'none';
-        }
+  <!-- Trigger escondidito para activar ADMIN -->
+  <button id="secret-trigger" title="No hay nada aca" aria-label="activador admin"></button>
 
-        // Populate admin select
-        function populateAdminSelect() {
-            adminCourseSelect.innerHTML = '';
-            courses.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.name;
-                opt.textContent = c.name;
-                adminCourseSelect.appendChild(opt);
-            });
-        }
+  <!-- Modal / panel admin (hidden por defecto) -->
+  <div id="admin-modal" class="admin-modal" aria-hidden="true">
+    <div class="admin-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+      <button id="close-admin" class="close-btn" title="Cerrar" aria-label="Cerrar">✕</button>
+      <h3 id="admin-title">Ingreso de administrador</h3>
 
-        // Add donations and persist
-        function addDonationsToCourse(courseName, amount) {
-            const course = courses.find(c => c.name === courseName);
-            if (!course) return false;
-            course.donations += amount;
-            saveCourses(courses);
-            render();
-            return true;
-        }
+      <div id="admin-login">
+        <p>Ingresa el código secreto para activar modo ADMIN:</p>
+        <input id="admin-code" type="password" placeholder="Código secreto" aria-label="Código secreto">
+        <button id="admin-auth">Activar</button>
+        <p id="auth-msg" class="small" aria-live="polite"></p>
+      </div>
 
-        // Check lock state
-        function isLocked() {
-            const lockUntil = getLockUntil();
-            if (!lockUntil) return false;
-            return Date.now() < lockUntil;
-        }
-        function lockRemainingMs() {
-            const lockUntil = getLockUntil();
-            return Math.max(0, lockUntil - Date.now());
-        }
+      <div id="admin-controls" style="display:none;">
+        <p class="small">Modo ADMIN activado. Puedes sumar donaciones:</p>
+        <label for="admin-course">Curso</label>
+        <select id="admin-course" aria-label="Seleccionar curso"></select>
 
-        // UI events
-        secretTrigger.addEventListener('click', () => {
-            adminModal.style.display = 'flex';
-            adminModal.setAttribute('aria-hidden','false');
-            adminCodeInput.value = '';
-            adminCodeInput.focus();
-            updateAuthMsg();
-        });
-        closeAdmin.addEventListener('click', () => {
-            adminModal.style.display = 'none';
-            adminModal.setAttribute('aria-hidden','true');
-            authMsg.textContent = '';
-            adminControls.style.display = 'none';
-        });
+        <label for="admin-amount">Cantidad a sumar</label>
+        <input id="admin-amount" type="number" value="1" aria-label="Cantidad">
 
-        adminAuthBtn.addEventListener('click', () => {
-            const now = Date.now();
-            if (isLocked()) {
-                const rem = Math.ceil(lockRemainingMs() / 60000);
-                authMsg.textContent = `Cuenta bloqueada por intentos fallidos. Intenta en ${rem} min.`;
-                return;
-            }
-            const code = (adminCodeInput.value || '').trim();
-            if (code === SECRET_CODE) {
-                // reset failed attempts
-                setFailed(0);
-                setLockUntil(0);
-                authMsg.textContent = 'Administrador activado';
-                adminControls.style.display = 'block';
-                populateAdminSelect();
-                adminCourseSelect.focus();
-            } else {
-                const failed = getFailed() + 1;
-                setFailed(failed);
-                if (failed >= MAX_FAILED) {
-                    const until = now + LOCK_MS;
-                    setLockUntil(until);
-                    authMsg.textContent = 'Demasiados intentos. Bloqueado por 1 hora.';
-                } else {
-                    const left = MAX_FAILED - failed;
-                    authMsg.textContent = `Código incorrecto. Te quedan ${left} intentos.`;
-                }
-                adminControls.style.display = 'none';
-            }
-        });
+        <button id="admin-add">Agregar donaciones</button>
+        <p id="admin-status" class="small" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
 
-        adminAdd.addEventListener('click', () => {
-            const courseName = adminCourseSelect.value;
-            const amount = parseInt(adminAmount.value, 10);
-            // permitir negativos, pero no aceptar 0 o entradas inválidas
-            if (!Number.isFinite(amount) || amount === 0) {
-                adminStatus.textContent = 'Ingresa una cantidad distinta de 0';
-                return;
-            }
-            const ok = addDonationsToCourse(courseName, amount);
-            if (ok) {
-                adminStatus.textContent = `Se actualizaron ${amount > 0 ? '+'+amount : amount} prendas en ${courseName}.`;
-            } else {
-                adminStatus.textContent = 'Error al actualizar.';
-            }
-            setTimeout(()=> adminStatus.textContent = '', 3000);
-        });
+  <!-- Script de lógica, admin y Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-analytics.js";
 
-        // Cerrar modal con ESC
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                adminModal.style.display = 'none';
-                adminModal.setAttribute('aria-hidden','true');
-            }
-        });
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIQ0RwXa3mUjl6Vx1BvDrtPOW76LBCRRk",
+      authDomain: "coaniquem-campaign.firebaseapp.com",
+      databaseURL: "https://coaniquem-campaign-default-rtdb.firebaseio.com",
+      projectId: "coaniquem-campaign",
+      storageBucket: "coaniquem-campaign.firebasestorage.app",
+      messagingSenderId: "655815075273",
+      appId: "1:655815075273:web:5016b5b1d8a8d19a22b418",
+      measurementId: "G-JYV5V3RG6W"
+    };
 
-        // Mostrar estado de bloqueo si corresponde
-        function updateAuthMsg() {
-            if (isLocked()) {
-                const mins = Math.ceil(lockRemainingMs() / 60000);
-                authMsg.textContent = `Cuenta bloqueada por intentos fallidos. Intenta en ${mins} min.`;
-            } else {
-                const failed = getFailed();
-                if (failed > 0) {
-                    const left = MAX_FAILED - failed;
-                    authMsg.textContent = `Intentos fallidos: ${failed}. Te quedan ${left}.`;
-                } else authMsg.textContent = '';
-            }
-        }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const analytics = getAnalytics(app);
 
-        // Inicial
-        render();
+    const SECRET_CODE = '95241322';
+    const courses = [];
 
-    })();
-    </script>
+    function buildCourses() {
+      const list = [];
+      const pushRange = (grade, letters) => letters.forEach(l => {
+        if (grade==='7°' && l==='B') return;
+        list.push({name: `${grade} ${l}`, donations: 0});
+      });
+      for (let g=1; g<=6; g++) {
+        const label=g+'°';
+        if (g===3) pushRange(label, ['A','B','C','D','E']);
+        else pushRange(label, ['A','B','C','D']);
+      }
+      ['7°','8°','I°','II°','III°','IV°'].forEach(g => pushRange(g,['A','B','C']));
+      return list;
+    }
+
+    const initialCourses = buildCourses();
+    initialCourses.forEach(c => courses.push(c));
+
+    const rankingList = document.getElementById('ranking-list');
+    const noDonations = document.getElementById('no-donations');
+    const secretTrigger = document.getElementById('secret-trigger');
+    const adminModal = document.getElementById('admin-modal');
+    const adminAuthBtn = document.getElementById('admin-auth');
+    const adminCodeInput = document.getElementById('admin-code');
+    const authMsg = document.getElementById('auth-msg');
+    const adminControls = document.getElementById('admin-controls');
+    const adminCourseSelect = document.getElementById('admin-course');
+    const adminAmount = document.getElementById('admin-amount');
+    const adminAdd = document.getElementById('admin-add');
+    const adminStatus = document.getElementById('admin-status');
+    const closeAdmin = document.getElementById('close-admin');
+
+    function render() {
+      rankingList.innerHTML='';
+      const sorted = [...courses].sort((a,b)=>b.donations - a.donations || a.name.localeCompare(b.name));
+      sorted.forEach(c=>{
+        const li=document.createElement('li');
+        li.innerHTML='<span class="course">'+c.name+'</span> <span class="badge">'+c.donations+' prendas</span>';
+        rankingList.appendChild(li);
+      });
+      noDonations.style.display = courses.every(c=>c.donations===0)?'block':'none';
+    }
+
+    function populateAdminSelect(){
+      adminCourseSelect.innerHTML='';
+      courses.forEach(c=>{
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = c.name;
+        adminCourseSelect.appendChild(opt);
+      });
+    }
+
+    const dbRef = ref(db, 'courses');
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+      courses.length=0;
+      Object.entries(data).forEach(([name, donations])=>{
+        courses.push({name, donations});
+      });
+      render();
+      populateAdminSelect();
+    });
+
+    function addDonationsFirebase(courseName, amount){
+      const course = courses.find(c => c.name===courseName);
+      if(!course) return;
+      const courseRef = ref(db, 'courses/' + courseName);
+      set(courseRef, course.donations + amount);
+    }
+
+    secretTrigger.addEventListener('click', ()=>{
+      adminModal.style.display='flex';
+      adminModal.setAttribute('aria-hidden','false');
+      adminCodeInput.value='';
+      adminCodeInput.focus();
+    });
+    closeAdmin.addEventListener('click', ()=>{
+      adminModal.style.display='none';
+      adminModal.setAttribute('aria-hidden','true');
+      authMsg.textContent='';
+      adminControls.style.display='none';
+    });
+
+    adminAuthBtn.addEventListener('click', ()=>{
+      const code = adminCodeInput.value.trim();
+      if(code===SECRET_CODE){
+        authMsg.textContent='Administrador activado';
+        adminControls.style.display='block';
+        populateAdminSelect();
+      } else {
+        authMsg.textContent='Código incorrecto';
+        adminControls.style.display='none';
+      }
+    });
+
+    adminAdd.addEventListener('click', ()=>{
+      const courseName = adminCourseSelect.value;
+      const amount = parseInt(adminAmount.value,10);
+      if(!Number.isFinite(amount)||amount===0){
+        adminStatus.textContent='Ingresa una cantidad distinta de 0';
+        return;
+      }
+      addDonationsFirebase(courseName, amount);
+      adminStatus.textContent=`Se actualizaron ${amount>0?'+'+amount:amount} prendas en ${courseName}.`;
+      setTimeout(()=>adminStatus.textContent='',3000);
+    });
+
+    window.addEventListener('keydown',(e)=>{
+      if(e.key==='Escape'){
+        adminModal.style.display='none';
+        adminModal.setAttribute('aria-hidden','true');
+      }
+    });
+
+    // Render inicial
+    render();
+  </script>
 </body>
 </html>
-
